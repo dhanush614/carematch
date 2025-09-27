@@ -1,0 +1,32 @@
+"use client"
+
+export default function StatsCard({ title, value, icon: Icon, trend }) {
+  return (
+    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 p-6 border border-gray-100">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-600 tracking-wide">{title}</p>
+          <p className="mt-2 text-3xl font-semibold text-gray-900">{value}</p>
+        </div>
+        {Icon && (
+          <div className="p-4 bg-red-50 rounded-xl border border-red-100">
+            <Icon className="w-6 h-6 text-red-600" />
+          </div>
+        )}
+      </div>
+      {trend && (
+        <div className="mt-4">
+          <div className={`flex items-center text-sm font-medium ${
+            trend.direction === 'up' 
+              ? 'text-emerald-600 bg-emerald-50' 
+              : 'text-red-600 bg-red-50'
+          } rounded-full px-2.5 py-1 w-fit`}>
+            {trend.direction === 'up' ? '↑' : '↓'}
+            <span className="ml-1">{trend.value}%</span>
+            <span className="ml-2 text-gray-500 bg-transparent">vs. last month</span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
