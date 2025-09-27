@@ -1,4 +1,4 @@
-# CareSphere
+# CareMatch
 
 A modern platform connecting parents with trusted caregivers, built with Next.js and Supabase.
 

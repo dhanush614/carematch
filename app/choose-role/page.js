@@ -39,7 +39,7 @@ export default function ChooseRole() {
           Choose your role
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Select how you want to use CareSphere
+          Select how you want to use CareMatch
         </p>
       </div>
 
@@ -61,25 +61,16 @@ export default function ChooseRole() {
                 }
 
                 // Create parent profile
-                const { data: profileData, error } = await supabase
+                const { error } = await supabase
                   .from('parent_profiles')
                   .insert({
                     user_id: user.id,
                     email: user.email,
-                    name: user.user_metadata?.full_name || '',
-                    avatar_url: user.user_metadata?.avatar_url || ''
+                    name: user.user_metadata.full_name || '',
+                    avatar_url: user.user_metadata.avatar_url || ''
                   })
-                  .select()
-                  .single()
 
-                if (error) {
-                  console.error('Error creating parent profile:', error)
-                  throw error
-                }
-
-                if (!profileData) {
-                  throw new Error('Failed to create parent profile')
-                }
+                if (error) throw error
                 
                 showToast('Parent profile created successfully', 'success')
                 router.push('/post-parent')
