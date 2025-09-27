@@ -15,8 +15,6 @@ export default function StatsCard({ title, value, icon, trend }) {
             {typeof icon === 'function' 
               ? createElement(icon, { className: "w-6 h-6 text-red-600" })
               : icon}
-          </div>
-        )}
       </div>
       {trend && (
         <div className="mt-4">

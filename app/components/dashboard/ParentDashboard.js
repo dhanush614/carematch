@@ -5,17 +5,15 @@ import { supabase } from "../../../lib/supabaseClient"
 import { useAuth } from "../../context/auth"
 import StatsCard from "./StatsCard"
 import MatchCard from "./MatchCard"
-import MessageList from "./MessageList"
+
 
 export default function ParentDashboard() {
   const { user } = useAuth()
   const [stats, setStats] = useState({
     activeRequests: 0,
-    totalMatches: 0,
-    messages: 0,
+    totalMatches: 0
   })
   const [recentMatches, setRecentMatches] = useState([])
-  const [recentMessages, setRecentMessages] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -39,17 +37,7 @@ export default function ParentDashboard() {
           .order('matched_at', { ascending: false })
           .limit(3)
 
-        // Fetch recent messages
-        const { data: messages } = await supabase
-          .from('messages')
-          .select(`
-            *,
-            sender:profiles(name, avatar_url),
-            receiver:profiles(name, avatar_url)
-          `)
-          .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
-          .order('created_at', { ascending: false })
-          .limit(5)
+
 
         // Update stats
         const { count: requestCount } = await supabase
@@ -60,12 +48,10 @@ export default function ParentDashboard() {
 
         setStats({
           activeRequests: requestCount || 0,
-          totalMatches: matches?.length || 0,
-          messages: messages?.length || 0,
+          totalMatches: matches?.length || 0
         })
 
         setRecentMatches(matches || [])
-        setRecentMessages(messages || [])
       } catch (error) {
         console.error('Error fetching dashboard data:', error)
       } finally {
@@ -98,15 +84,7 @@ export default function ParentDashboard() {
             </svg>
           }
         />
-        <StatsCard
-          title="Messages"
-          value={stats.messages}
-          icon={
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
-          }
-        />
+
       </div>
 
       {/* Recent Matches */}
@@ -124,11 +102,7 @@ export default function ParentDashboard() {
         </div>
       </div>
 
-      {/* Recent Messages */}
-      <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Messages</h2>
-        <MessageList messages={recentMessages} />
-      </div>
+
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

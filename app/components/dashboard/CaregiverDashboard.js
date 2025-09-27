@@ -6,7 +6,7 @@ import { useAuth } from "../../context/auth"
 import StatsCard from "./StatsCard"
 import AvailabilityCalendar from "./AvailabilityCalendar"
 import ReviewCard from "./ReviewCard"
-import MessageList from "./MessageList"
+
 
 export default function CaregiverDashboard() {
   const { user } = useAuth()
@@ -16,7 +16,6 @@ export default function CaregiverDashboard() {
     rating: 0,
     reviews: 0,
   })
-  const [recentMessages, setRecentMessages] = useState([])
   const [recentReviews, setRecentReviews] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -51,17 +50,7 @@ export default function CaregiverDashboard() {
         // Calculate average rating
         const avgRating = reviews?.reduce((acc, review) => acc + review.rating, 0) / (reviews?.length || 1)
 
-        // Fetch recent messages
-        const { data: messages } = await supabase
-          .from('messages')
-          .select(`
-            *,
-            sender:profiles(name, avatar_url),
-            receiver:profiles(name, avatar_url)
-          `)
-          .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
-          .order('created_at', { ascending: false })
-          .limit(5)
+
 
         setStats({
           activeBookings: bookingsCount || 0,
@@ -70,7 +59,7 @@ export default function CaregiverDashboard() {
           reviews: reviews?.length || 0,
         })
 
-        setRecentMessages(messages || [])
+
         setRecentReviews(reviews || [])
       } catch (error) {
         console.error('Error fetching dashboard data:', error)
@@ -147,7 +136,7 @@ export default function CaregiverDashboard() {
         </div>
       </div>
 
-      {/* Recent Messages */}
+
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Messages</h2>
         <MessageList messages={recentMessages} />

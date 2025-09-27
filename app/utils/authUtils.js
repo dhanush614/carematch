@@ -36,7 +36,7 @@ export async function getUserType(userId) {
 
 // Protected routes configuration
 export const protectedRoutes = {
-  common: ['/settings', '/messages'],
+  common: ['/settings'],
   [USER_TYPES.PARENT]: [
     '/matches',
     '/post-parent',

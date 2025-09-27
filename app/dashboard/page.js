@@ -13,13 +13,8 @@ export default function Dashboard() {
   const router = useRouter()
   const { showToast } = useToast()
 
-  if (!user) {
+  if (!user || !userType) {
     router.push('/')
-    return null
-  }
-
-  if (!userType) {
-    router.push('/choose-role')
     return null
   }
 

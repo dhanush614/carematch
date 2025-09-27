@@ -1,66 +1,47 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { supabase } from '../../../lib/supabaseClient'
 import LoadingSpinner from '../../components/LoadingSpinner'
 
 export default function AuthCallback() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [error, setError] = useState(null)
 
   useEffect(() => {
     const handleAuth = async () => {
       try {
-        // Get the session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        // Get the current session
+        const { data: { session }, error } = await supabase.auth.getSession()
+        if (error) throw error
         
-        if (sessionError) {
-          throw sessionError
-        }
-
-        if (session) {
-          const { user } = session
-
-          // Get the intended user type
-          const intendedUserType = sessionStorage.getItem('intendedUserType')
-          
-          if (!intendedUserType) {
-            throw new Error('No user type selected')
-          }
-
-          // Check if user already has a profile of the intended type
-          const { data: profile, error: profileError } = await supabase
-            .from(intendedUserType === 'parent' ? 'parent_profiles' : 'caregiver_profiles')
-            .select('id')
-            .eq('user_id', user.id)
-            .single()
-
-          if (profile) {
-            // User already has the correct profile type
-            router.push('/dashboard')
-          } else {
-            // Create new profile and redirect to complete it
-            const { error: insertError } = await supabase
-              .from(intendedUserType === 'parent' ? 'parent_profiles' : 'caregiver_profiles')
-              .insert([{ user_id: user.id }])
-
-            if (insertError) throw insertError
-
-            // Clear the stored type
-            sessionStorage.removeItem('intendedUserType')
-            
-            // Redirect to complete profile
-            router.push(intendedUserType === 'parent' ? '/post-parent' : '/post-caregiver')
-          }
-        } else {
+        if (!session) {
           throw new Error('No session found')
         }
-      } catch (err) {
-        console.error('Error during auth callback:', err)
-        setError(err.message)
-        // Wait a bit before redirecting to show the error
+
+        // Get the intended user type from storage
+        const intendedUserType = sessionStorage.getItem('intendedUserType')
+        if (!intendedUserType) {
+          throw new Error('No user type selected')
+        }
+
+        // Store the user type in user metadata
+        const { error: updateError } = await supabase.auth.updateUser({
+          data: { user_type: intendedUserType }
+        })
+
+        if (updateError) throw updateError
+
+        // Clear stored type
+        sessionStorage.removeItem('intendedUserType')
+        
+        // Redirect to dashboard
+        router.push('/dashboard')
+      } catch (error) {
+        console.error('Error during auth callback:', error)
+        setError(error.message)
+        // Wait a bit then redirect to home
         setTimeout(() => {
           router.push('/')
         }, 3000)
