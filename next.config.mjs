@@ -1,14 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  poweredByHeader: false,
   images: {
-    domains: ['www.gravatar.com'],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**'
-      }
-    ]
+        hostname: '*',
+      },
+    ],
   },
   async headers() {
     return [
