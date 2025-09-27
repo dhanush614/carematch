@@ -26,14 +26,13 @@ export default function AuthPage() {
 
     const handleAuth = async () => {
       try {
+        // Store intended user type before sign in
+        sessionStorage.setItem('intendedUserType', userType)
+        
         const { error } = await signIn()
         if (error) throw error
         
-        // After successful sign in, set the user type
-        localStorage.setItem('userType', userType)
-        
-        // Redirect to the role confirmation page after sign in
-        router.push('/choose-role')
+        // The auth callback will handle the rest of the flow
       } catch (error) {
         console.error('Authentication error:', error)
         router.push('/')

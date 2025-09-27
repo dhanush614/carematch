@@ -23,19 +23,36 @@ export default function AuthCallback() {
         if (session) {
           const { user } = session
 
-          // Check if user already has a profile
-          const [{ data: parentProfile }, { data: caregiverProfile }] = await Promise.all([
-            supabase.from('parent_profiles').select('id').eq('user_id', user.id).single(),
-            supabase.from('caregiver_profiles').select('id').eq('user_id', user.id).single()
-          ])
+          // Get the intended user type
+          const intendedUserType = sessionStorage.getItem('intendedUserType')
+          
+          if (!intendedUserType) {
+            throw new Error('No user type selected')
+          }
 
-          if (parentProfile) {
-            router.push('/dashboard')
-          } else if (caregiverProfile) {
+          // Check if user already has a profile of the intended type
+          const { data: profile, error: profileError } = await supabase
+            .from(intendedUserType === 'parent' ? 'parent_profiles' : 'caregiver_profiles')
+            .select('id')
+            .eq('user_id', user.id)
+            .single()
+
+          if (profile) {
+            // User already has the correct profile type
             router.push('/dashboard')
           } else {
-            // No profile exists, redirect to choose-role
-            router.push('/choose-role')
+            // Create new profile and redirect to complete it
+            const { error: insertError } = await supabase
+              .from(intendedUserType === 'parent' ? 'parent_profiles' : 'caregiver_profiles')
+              .insert([{ user_id: user.id }])
+
+            if (insertError) throw insertError
+
+            // Clear the stored type
+            sessionStorage.removeItem('intendedUserType')
+            
+            // Redirect to complete profile
+            router.push(intendedUserType === 'parent' ? '/post-parent' : '/post-caregiver')
           }
         } else {
           throw new Error('No session found')
