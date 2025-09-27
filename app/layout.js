@@ -17,6 +17,24 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "CareMatch - Intelligent Caregiver Matching",
   description: "Connect with trusted caregivers using our smart matching system",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  openGraph: {
+    title: 'CareMatch - Intelligent Caregiver Matching',
+    description: 'Connect with trusted caregivers using our smart matching system',
+    type: 'website',
+    locale: 'en_US',
+    images: ['/og-image.jpg'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CareMatch - Intelligent Caregiver Matching',
+    description: 'Connect with trusted caregivers using our smart matching system',
+    images: ['/og-image.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  }
 };
 
 export default function RootLayout({ children }) {

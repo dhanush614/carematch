@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Image from 'next/image'
 import { useAuth } from '../context/auth'
 import { supabase } from '../../lib/supabaseClient'
 import { USER_TYPES } from '../utils/authUtils'
@@ -110,10 +111,12 @@ export default function Navbar() {
                 <button
                   className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200"
                 >
-                  <img 
+                  <Image 
                     src={user?.user_metadata?.avatar_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'} 
                     alt={user?.user_metadata?.full_name || 'User'} 
-                    className="w-8 h-8 rounded-full mr-2"
+                    width={32}
+                    height={32}
+                    className="rounded-full mr-2"
                   />
                   <span className="font-medium">{user?.user_metadata?.full_name || user?.email}</span>
                   <span className="ml-2 text-gray-400">({userType === USER_TYPES.PARENT ? 'Parent' : 'Caregiver'})</span>
