@@ -3,14 +3,5 @@
   "buildCommand": "npm run build",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": ["iad1"],
-  "images": {
-    "domains": ["www.gravatar.com"],
-    "remotePatterns": [
-      {
-        "protocol": "https",
-        "hostname": "**"
-      }
-    ]
-  }
+  "regions": ["iad1"]
 }
