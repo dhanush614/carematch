@@ -65,7 +65,7 @@ export default function ParentDashboard() {
   return (
     <div className="space-y-8">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
         <StatsCard
           title="Active Requests"
           value={stats.activeRequests}
@@ -89,8 +89,8 @@ export default function ParentDashboard() {
 
       {/* Recent Matches */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Matches</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Recent Matches</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {recentMatches.map((match) => (
             <MatchCard key={match.id} match={match} />
           ))}

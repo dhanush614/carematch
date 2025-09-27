@@ -4,11 +4,11 @@ import { createElement } from 'react'
 
 export default function StatsCard({ title, value, icon, trend }) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 p-6 border border-gray-100">
+    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 p-4 sm:p-6 border border-gray-100">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600 tracking-wide">{title}</p>
-          <p className="mt-2 text-3xl font-semibold text-gray-900">{value}</p>
+          <p className="text-xs sm:text-sm font-medium text-gray-600 tracking-wide">{title}</p>
+          <p className="mt-1 sm:mt-2 text-2xl sm:text-3xl font-semibold text-gray-900">{value}</p>
         </div>
         {icon && (
           <div className="p-4 bg-red-50 rounded-xl border border-red-100">

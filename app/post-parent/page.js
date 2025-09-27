@@ -59,11 +59,10 @@ export default function PostParent() {
     setLoading(true)
     try {
       const { error } = await supabase
-        .from("parent_profiles")
+        .from("parents")
         .insert([{
           user_id: user.id,
           name: form.name,
-          email: user.email,
           kids_count: parseInt(form.kids_count),
           needs_petcare: form.needs_petcare,
           overnight_stay: form.overnight_stay,
@@ -92,11 +91,11 @@ export default function PostParent() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 px-4">
+    <div className="max-w-2xl mx-auto mt-6 sm:mt-10 px-4">
       <div className="bg-white shadow-sm rounded-xl overflow-hidden border border-gray-100">
-        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Create Parent Profile</h2>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Create Parent Profile</h2>
             <p className="mt-1 text-sm text-gray-500">Fill in your details to find the perfect caregiver match</p>
           </div>
           <div className="h-12 w-12 bg-red-50 rounded-full flex items-center justify-center">

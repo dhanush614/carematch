@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useAuth } from '../context/auth'
 import { supabase } from '../../lib/supabaseClient'
 import { USER_TYPES } from '../utils/authUtils'
+import MobileNav from './MobileNav'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -55,11 +56,12 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
+    <nav className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-100 w-full">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+        <div className="relative flex justify-between h-16">
+          <div className="flex items-center flex-shrink-0">
+            {user && <MobileNav navItems={getNavItems()} />}
+            <div className="flex-shrink-0 flex items-center ml-2 sm:ml-0">
               <Link 
                 href="/" 
                 className="flex items-center space-x-2 text-2xl font-bold text-red-600 hover:text-red-700 transition-colors"
@@ -67,16 +69,16 @@ export default function Navbar() {
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                <span>CareMatch</span>
+                <span className="hidden lg:inline">CareMatch</span>
               </Link>
             </div>
             {user && (
-              <div className="hidden sm:ml-8 sm:flex sm:space-x-1">
+              <div className="hidden lg:ml-8 lg:flex lg:space-x-1 overflow-x-auto">
                 {getNavItems().map(({ href, label, icon }) => (
                   <Link
                     key={href}
                     href={href}
-                    className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
+                    className={`inline-flex items-center whitespace-nowrap px-3 sm:px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
                       pathname === href
                         ? 'bg-red-50 text-red-600'
                         : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
@@ -92,10 +94,10 @@ export default function Navbar() {
             )}
           </div>
           {user && (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               <Link
                 href="/settings"
-                className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
+                className={`hidden lg:inline-flex items-center px-3 lg:px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
                   pathname === '/settings'
                     ? 'bg-red-50 text-red-600'
                     : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
@@ -109,7 +111,7 @@ export default function Navbar() {
               </Link>
               <div className="relative group">
                 <button
-                  className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200"
+                  className="inline-flex items-center p-3 sm:px-4 sm:py-2 text-sm font-medium rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200"
                 >
                   <Image 
                     src={user?.user_metadata?.avatar_url || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'} 
@@ -120,8 +122,8 @@ export default function Navbar() {
                     sizes="32px"
                     priority
                   />
-                  <span className="font-medium">{user?.user_metadata?.full_name || user?.email}</span>
-                  <span className="ml-2 text-gray-400">({userType === USER_TYPES.PARENT ? 'Parent' : 'Caregiver'})</span>
+                  <span className="hidden lg:inline font-medium">{user?.user_metadata?.full_name || user?.email}</span>
+                  <span className="hidden lg:inline ml-2 text-gray-400">({userType === USER_TYPES.PARENT ? 'Parent' : 'Caregiver'})</span>
                   <svg className="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                   </svg>
