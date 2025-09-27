@@ -58,7 +58,7 @@ export function AuthProvider({ children }) {
     return () => {
       subscription.unsubscribe()
     }
-  }, [])
+  }, [updateUserData])
 
   const value = {
     signIn: () => supabase.auth.signInWithOAuth({

@@ -259,7 +259,7 @@ export default function PostCaregiver() {
             <div className="space-y-8">
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">Basic Information</h2>
-                <p className="mt-1 text-sm text-gray-500">Let's start with your profile details</p>
+                <p className="mt-1 text-sm text-gray-500">Let&apos;s start with your profile details</p>
               </div>
               
               <div className="space-y-6">
@@ -269,9 +269,11 @@ export default function PostCaregiver() {
                     <div className="relative group">
                       <div className="w-32 h-32 rounded-full border-2 border-gray-200 flex items-center justify-center overflow-hidden bg-gray-50 transition-all duration-200 group-hover:border-red-200">
                         {form.profileImage ? (
-                          <img 
+                          <Image 
                             src={URL.createObjectURL(form.profileImage)} 
                             alt="Profile preview" 
+                            width={128}
+                            height={128}
                             className="w-full h-full object-cover"
                           />
                         ) : (
