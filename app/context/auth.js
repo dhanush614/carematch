@@ -64,6 +64,13 @@ export function AuthProvider({ children }) {
     signIn: () => supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
+        redirectTo: typeof window !== 'undefined'
+          ? `${window.location.origin}/auth/callback`
+          : process.env.NEXT_PUBLIC_SITE_URL
+            ? `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`
+            : 'http://localhost:3000/auth/callback',
+      },
+      options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       }
     }),
