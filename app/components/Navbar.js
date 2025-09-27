@@ -115,7 +115,8 @@ export default function Navbar() {
                     alt={user?.user_metadata?.full_name || 'User'} 
                     className="w-8 h-8 rounded-full mr-2"
                   />
-                  <span>{userType === USER_TYPES.PARENT ? 'Parent' : 'Caregiver'}</span>
+                  <span className="font-medium">{user?.user_metadata?.full_name || user?.email}</span>
+                  <span className="ml-2 text-gray-400">({userType === USER_TYPES.PARENT ? 'Parent' : 'Caregiver'})</span>
                   <svg className="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                   </svg>
