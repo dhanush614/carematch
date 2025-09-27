@@ -117,6 +117,8 @@ export default function Navbar() {
                     width={32}
                     height={32}
                     className="rounded-full mr-2"
+                    sizes="32px"
+                    priority
                   />
                   <span className="font-medium">{user?.user_metadata?.full_name || user?.email}</span>
                   <span className="ml-2 text-gray-400">({userType === USER_TYPES.PARENT ? 'Parent' : 'Caregiver'})</span>
