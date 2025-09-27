@@ -136,12 +136,6 @@ export default function CaregiverDashboard() {
         </div>
       </div>
 
-
-      <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Messages</h2>
-        <MessageList messages={recentMessages} />
-      </div>
-
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <button

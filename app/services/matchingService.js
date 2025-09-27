@@ -56,10 +56,10 @@ export function calculateMatchScore(parent, caregiver) {
  * @returns {Array} - Sorted matches with scores
  */
 export function findMatches(parents, caregivers, filters = {}) {
-  const matches = [];
+  const matches = new Map(); // Use a Map to track unique caregiver matches
 
   for (const parent of parents) {
-    const parentMatches = caregivers
+    const filteredCaregivers = caregivers
       .filter(caregiver => {
         // Apply filters
         if (filters.minRating && caregiver.rating < filters.minRating) return false;
@@ -68,17 +68,26 @@ export function findMatches(parents, caregivers, filters = {}) {
         if (filters.overnight && !caregiver.overnight_ok) return false;
         if (filters.petCare && !caregiver.pets_ok) return false;
         return true;
-      })
-      .map(caregiver => ({
-        parent,
-        caregiver,
-        score: calculateMatchScore(parent, caregiver)
-      }))
-      .filter(match => match.score >= (filters.minScore || 0));
+      });
 
-    matches.push(...parentMatches);
+    for (const caregiver of filteredCaregivers) {
+      const score = calculateMatchScore(parent, caregiver);
+      if (score >= (filters.minScore || 0)) {
+        const key = `${caregiver.id}`; // Use caregiver ID as unique key
+        const existingMatch = matches.get(key);
+        
+        // Only keep the match with the higher score
+        if (!existingMatch || score > existingMatch.score) {
+          matches.set(key, {
+            parent,
+            caregiver,
+            score
+          });
+        }
+      }
+    }
   }
 
-  // Sort by score in descending order
-  return matches.sort((a, b) => b.score - a.score);
+  // Convert Map to array and sort by score in descending order
+  return Array.from(matches.values()).sort((a, b) => b.score - a.score);
 }
