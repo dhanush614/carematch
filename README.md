@@ -2,16 +2,7 @@
 
 A modern platform connecting parents with trusted caregivers, built with Next.js and Supabase.
 
-## Features
-
-- 🔒 Secure authentication with Supabase
-- 👥 Separate flows for parents and caregivers
-- 🤝 Smart matching algorithm
-- 💬 Real-time messaging
-- 📅 Availability management
-- ⭐ Reviews and ratings
-- 🎯 Customizable profiles
-- 📱 Responsive design
+Live Link: https://carematch-one.vercel.app/
 
 ## Tech Stack
 
