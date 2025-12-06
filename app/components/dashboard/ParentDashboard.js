@@ -1,49 +1,93 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { supabase } from "../../../lib/supabaseClient"
-import { useAuth } from "../../context/auth"
 import StatsCard from "./StatsCard"
 import MatchCard from "./MatchCard"
 
 
 export default function ParentDashboard() {
-  const { user } = useAuth()
   const [stats, setStats] = useState({
     activeRequests: 0,
     totalMatches: 0
   })
   const [recentMatches, setRecentMatches] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const isMounted = useRef(true)
+  const maxRetries = 3
+  const retryDelay = 1000 // 1 second
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isMounted.current = false
+    }
+  }, [])
+
+  const fetchWithRetry = async (fetchFn, retries = maxRetries) => {
+    try {
+      return await fetchFn()
+    } catch (error) {
+      if (retries > 0) {
+        await new Promise(resolve => setTimeout(resolve, retryDelay))
+        return fetchWithRetry(fetchFn, retries - 1)
+      }
+      throw error
+    }
+  }
 
   useEffect(() => {
+    if (!isMounted.current) return
+
     const fetchDashboardData = async () => {
       try {
-        // Fetch parent profile
-        const { data: parentProfile } = await supabase
-          .from('parent_profiles')
-          .select('*')
-          .eq('user_id', user.id)
-          .single()
+        setError(null)
+
+        // Fetch parent profile - using only basic fields
+        const { data: parentProfile, error: profileError } = await fetchWithRetry(() =>
+          supabase
+            .from('parents')
+            .select('id, name')
+            .limit(1)
+        )
+        
+        // Convert single() to limit(1) and handle the array result
+        const profile = parentProfile?.[0]
+
+        if (!isMounted.current) return
+
+        if (profileError) {
+          console.error('Error fetching parent profile:', profileError)
+          if (isMounted.current) {
+            setError('Unable to load profile data. Please try again later.')
+          }
+          return
+        }
+
+        if (!profile) {
+          console.log('No parent profile found')
+          setStats({
+            activeRequests: 0,
+            totalMatches: 0
+          })
+          setRecentMatches([])
+          return
+        }
 
         // Fetch recent matches
         const { data: matches } = await supabase
           .from('matches')
-          .select(`
-            *,
-            caregiver:caregivers(*)
-          `)
-          .eq('parent_id', parentProfile.id)
-          .order('matched_at', { ascending: false })
+          .select('*')
+          .eq('parent_id', profile.id)
+          .order('created_at', { ascending: false })
           .limit(3)
-
-
 
         // Update stats
         const { count: requestCount } = await supabase
           .from('care_requests')
           .select('*', { count: 'exact' })
-          .eq('parent_id', parentProfile.id)
+          .eq('parent_id', profile.id)
           .eq('status', 'active')
 
         setStats({
@@ -60,7 +104,36 @@ export default function ParentDashboard() {
     }
 
     fetchDashboardData()
-  }, [user])
+  }, []) // Removed user dependency since we're not using it
+
+  if (error) {
+    return (
+      <div className="rounded-lg bg-red-50 p-4">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <div className="ml-3">
+            <h3 className="text-sm font-medium text-red-800">Error</h3>
+            <div className="mt-2 text-sm text-red-700">
+              <p>{error}</p>
+            </div>
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="rounded-md bg-red-50 px-4 py-2 text-sm font-medium text-red-800 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
